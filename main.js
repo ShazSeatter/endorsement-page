@@ -1,7 +1,7 @@
 import './style.css'
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"
-import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
+import { getDatabase, ref, push, onValue, update } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
 
 
 document.querySelector('#app').innerHTML = `
@@ -33,23 +33,23 @@ const endorsementListEl = document.getElementById("endorsement-list")
 const fromInputEl = document.getElementById("from-input")
 const toInputEl = document.getElementById("to-input")
 
+let messageEndorsement = null;
+
 publishBtn.addEventListener("click", function() {
   
   let endorsementEl = textareaEl.value
  
-  const messageEndorsement = {
-    from: fromInputEl.value,
-    to: toInputEl.value,
-    message: endorsementEl
-  }
+  messageEndorsement = createMessageEndorsementObject(fromInputEl.value, toInputEl.value, endorsementEl, 0)
 
+  console.log(messageEndorsement)
   push(endoresementsInDB, messageEndorsement)
 
   clearTextarea()
 
 })
 
-// this gets updated in real time 
+
+
 onValue(endoresementsInDB, function(snapshot) {
   if (snapshot.exists()) {
     let endoresementsArray = Object.entries(snapshot.val())
@@ -66,18 +66,49 @@ onValue(endoresementsInDB, function(snapshot) {
   }
 })
 
+function createMessageEndorsementObject(from, to, message, initialValue) {
+  return {
+    from: from,
+    to: to,
+    message: message,
+    likes: initialValue
+  }
+}
+
+// this gets updated in real time 
+
+
 // this appends a new li element to html 
 function appendToEndorsementEl (currentItem) {
+  let itemID = currentItem[0]
   let itemValue = currentItem[1]
 
   const inputFrom = capitalizeFirstLetter(itemValue.from)
   const inputTo = capitalizeFirstLetter(itemValue.to)
   const message = capitalizeFirstLetter(itemValue.message)
 
+  let newListEl = document.createElement("li")
   let newParagraphElTo = document.createElement("p")
   let newParagraphElMessage = document.createElement("p")
+  let divWrapper = document.createElement("div")
+  divWrapper.className = "from-paragraph-div-wrapper"
   let newParagraphElFrom = document.createElement("p")
   newParagraphElFrom.className = "from-paragraph"
+  let like = document.createElement("p")
+  like.className = "like-el"
+  like.textContent = "❤️"
+  let spanEl = document.createElement("span")
+  spanEl.textContent = itemValue.likes
+  like.appendChild(spanEl)
+
+ 
+  newListEl.appendChild(newParagraphElTo)
+  newListEl.appendChild(newParagraphElMessage)
+  newListEl.appendChild(divWrapper)
+  divWrapper.appendChild(newParagraphElFrom)
+  divWrapper.appendChild(like)
+  endorsementListEl.append(newListEl)
+
 
   let formattedTo = `To ${inputTo}`
   let formattedMessage = `${message}`
@@ -87,45 +118,23 @@ function appendToEndorsementEl (currentItem) {
   newParagraphElMessage.textContent += formattedMessage
   newParagraphElFrom.textContent += formattedFrom
 
-  let newListEl = document.createElement("li")
-  let likeButton = document.createElement("button")
-  let img = document.createElement("img")
-  likeButton.className = "liked"
-  img.src = "like.png"
-  img.className = "like-img"
-  img.id = "like-img"
+  like.addEventListener('click', () => {
+    let counter = 0
+    counter++
 
-  likeButton.appendChild(img)
+    // Update the displayed like count
+    spanEl.textContent = counter;
 
-  newListEl.appendChild(newParagraphElTo)
-  newListEl.appendChild(newParagraphElMessage)
-  newListEl.appendChild(newParagraphElFrom)
-  endorsementListEl.append(newListEl)
+    // update db with likes value 
+    let exactLocationOfItemInDB = ref(database, `endorsementList/${itemID}`)
+    update(exactLocationOfItemInDB, {likes: counter})
+    
 
-  let divWrapper = document.createElement("div")
-  divWrapper.className = "from-paragraph-div-wrapper"
-  newParagraphElFrom.appendChild(divWrapper)
-  divWrapper.appendChild(likeButton)
-  let counterParagraph = document.createElement("p")
-  counterParagraph.className = "counter-el"
-  divWrapper.appendChild(counterParagraph)
+  }, {once: true});
 
-  let counter = 1
-  likeButton.addEventListener('click', () => {
   
-    console.log(counter)
 
-    counterParagraph.textContent = counter++
-
-    likeButton.disabled = true;
-
-  });
-
-  console.log(counter)
 }
-
-
-
 
 function capitalizeFirstLetter(inputString) {
   if (inputString && inputString.length > 0) {
@@ -145,4 +154,3 @@ function clearTextarea() {
 function clearEndorsementListEl() {
   endorsementListEl.innerHTML = ""
 }
-
