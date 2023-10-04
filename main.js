@@ -33,8 +33,6 @@ const endorsementListEl = document.getElementById("endorsement-list")
 const fromInputEl = document.getElementById("from-input")
 const toInputEl = document.getElementById("to-input")
 
-
-
 publishBtn.addEventListener("click", function() {
   
   let endorsementEl = textareaEl.value
@@ -79,6 +77,7 @@ function appendToEndorsementEl (currentItem) {
   let newParagraphElTo = document.createElement("p")
   let newParagraphElMessage = document.createElement("p")
   let newParagraphElFrom = document.createElement("p")
+  newParagraphElFrom.className = "from-paragraph"
 
   let formattedTo = `To ${inputTo}`
   let formattedMessage = `${message}`
@@ -89,12 +88,43 @@ function appendToEndorsementEl (currentItem) {
   newParagraphElFrom.textContent += formattedFrom
 
   let newListEl = document.createElement("li")
+  let likeButton = document.createElement("button")
+  let img = document.createElement("img")
+  likeButton.className = "liked"
+  img.src = "like.png"
+  img.className = "like-img"
+  img.id = "like-img"
+
+  likeButton.appendChild(img)
+
   newListEl.appendChild(newParagraphElTo)
   newListEl.appendChild(newParagraphElMessage)
   newListEl.appendChild(newParagraphElFrom)
   endorsementListEl.append(newListEl)
 
+  let divWrapper = document.createElement("div")
+  divWrapper.className = "from-paragraph-div-wrapper"
+  newParagraphElFrom.appendChild(divWrapper)
+  divWrapper.appendChild(likeButton)
+  let counterParagraph = document.createElement("p")
+  counterParagraph.className = "counter-el"
+  divWrapper.appendChild(counterParagraph)
+
+  let counter = 1
+  likeButton.addEventListener('click', () => {
+  
+    console.log(counter)
+
+    counterParagraph.textContent = counter++
+
+    likeButton.disabled = true;
+
+  });
+
+  console.log(counter)
 }
+
+
 
 
 function capitalizeFirstLetter(inputString) {

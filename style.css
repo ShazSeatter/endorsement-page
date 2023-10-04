@@ -47,7 +47,7 @@ ul {
 ul li {
   background: white;
   color: #1B1924;
-  padding: 20px; 
+  padding: 10px 20px 10px 20px; 
 }
 
 .container {
@@ -55,7 +55,7 @@ ul li {
   flex-direction: column;
   align-items: center;
   max-width: 320px;
-  margin: 10px auto;
+  margin: 10px auto 50px;
 }
 
 .text-area {
@@ -103,4 +103,27 @@ input {
 
 p:first-child, p:last-child {
   font-weight: 700;
+}
+
+.counter-el {
+  font-size: 10px; 
+}
+.from-paragraph {
+  display: flex; 
+  justify-content: space-between;
+  margin: 0;
+}
+.like-img {
+  width: 10px;
+  margin: 0 5px 0 0;
+}
+
+.liked {
+  border: none; 
+  background: white;
+  padding: 0;
+}
+
+.from-paragraph-div-wrapper {
+  display: flex; 
 }
