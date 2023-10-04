@@ -6,18 +6,18 @@
   color: white;
   background-color: #1B1924;
 
-  font-synthesis: none;
+  /* font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%; */
 }
 
 
 html,body {
   margin: 0;
   padding: 0;
-  user-select: none;
+
 }
 
 img {
@@ -127,6 +127,7 @@ p:first-child, p:last-child {
 
 .like-el {
   margin: 0 2px 0 0;
+  user-select: none;
 }
 .from-paragraph-div-wrapper {
   display: flex; 
@@ -136,6 +137,7 @@ p:first-child, p:last-child {
 
 span {
   margin-left: 3px; 
+  user-select: none;
 }
 
 
